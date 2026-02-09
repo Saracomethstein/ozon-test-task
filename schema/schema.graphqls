@@ -77,3 +77,4 @@ type Mutation {
 type Subscription {
   commentAdded(postId: ID!): Comment!
 }
+
