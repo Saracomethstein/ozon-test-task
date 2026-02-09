@@ -1,0 +1,10 @@
+include-auto-generated: false
+
+packages:
+  github.com/Saracomethstein/ozon-test-task:
+    config:
+      dir: "{{.InterfaceDir}}/mocks"
+      filename: "mocks.go"
+      outpkg: "mocks"
+      recursive: true
+      all: true
