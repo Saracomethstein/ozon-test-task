@@ -2,16 +2,18 @@ FROM golang:1.24-bullseye AS builder
 
 WORKDIR /src
 
+COPY .env ./
 COPY go.mod go.sum ./
 RUN go mod download
+
 COPY . .
 
-ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
-RUN go build -ldflags='-s -w' -o /out/service ./cmd/service
+RUN make build
 
-FROM scratch
+FROM ubuntu:latest
 
-COPY --from=builder /out/service /app/service
+COPY --from=builder /src/build/ozon-test-task /app/ozon-test-task
+COPY --from=builder /src/.env /app/.env
 
 EXPOSE 8080
-ENTRYPOINT ["/app/service"]
+ENTRYPOINT ["/app/ozon-test-task"]
