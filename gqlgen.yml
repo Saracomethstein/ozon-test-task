@@ -12,14 +12,11 @@ model:
   package: graphql
 
 resolver:
-  package: graphql
+  package: resolvers
   layout: follow-schema
-  dir: internal/handler/graphql
+  dir: internal/handler/graphql/resolvers
   filename_template: "{name}_resolvers.go"
   preserve_resolver: true
-
-autobind:
-  - "github.com/Saracomethstein/ozon-test-task/internal/domain"
 
 models:
   ID:
