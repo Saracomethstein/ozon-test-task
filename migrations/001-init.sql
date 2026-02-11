@@ -7,4 +7,5 @@ CREATE TABLE posts (
     created_at TEXT NOT NULL DEFAULT to_char(now(), 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')
 );
 
-CREATE INDEX idx_posts_created_at ON posts (created_at DESC);
+CREATE INDEX idx_posts_created_at_id ON posts (created_at DESC, id DESC);
+    

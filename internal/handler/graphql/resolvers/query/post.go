@@ -2,11 +2,23 @@ package query
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/Saracomethstein/ozon-test-task/generated/graphql"
+	"github.com/pkg/errors"
 )
 
 func (r *queryResolver) Post(ctx context.Context, id string) (*graphql.Post, error) {
-	panic(fmt.Errorf("not implemented: Post - post"))
+	post, err := r.service.PostService.GetPostById(ctx, id)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get post by ID: %w")
+	}
+
+	return &graphql.Post{
+		ID:            post.ID,
+		Title:         post.Title,
+		Body:          post.Body,
+		Author:        post.Author,
+		AllowComments: post.AllowComments,
+		CreatedAt:     post.CreatedAt,
+	}, nil
 }
