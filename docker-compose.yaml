@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:15
+    container_name: ozon_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ozon
+      POSTGRES_USER: ozon_user
+      POSTGRES_PASSWORD: ozon_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+
+  api:
+    build: .
+    container_name: ozon_service
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: ozon_user
+      DB_PASSWORD: ozon_pass
+      DB_NAME: ozon
+    ports:
+      - "8080:8080"
+
+volumes:
+  pg_data:

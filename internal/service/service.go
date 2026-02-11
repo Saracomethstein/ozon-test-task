@@ -6,13 +6,16 @@ import (
 )
 
 type Container struct {
-	PostService    post.PostService
-	CommentService comment.CommentService
+	PostService    post.UseCase
+	CommentService comment.UseCase
 }
 
-func New() *Container {
+func New(
+	post post.UseCase,
+	comment comment.UseCase,
+) *Container {
 	return &Container{
-		PostService:    *post.New(),
-		CommentService: *comment.New(),
+		PostService:    post,
+		CommentService: comment,
 	}
 }
