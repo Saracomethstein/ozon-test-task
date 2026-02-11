@@ -9,9 +9,9 @@ import (
 
 const (
 	savePostQuery = `
-	insert into posts (title, body, author, allow_comments, created_at) 
-	values ($1, $2, $3, $4, $5)
-	returning id, title, body, author, allow_comments, created_at
+		insert into posts (title, body, author, allow_comments, created_at) 
+		values ($1, $2, $3, $4, $5)
+		returning id, title, body, author, allow_comments, created_at
 	`
 )
 

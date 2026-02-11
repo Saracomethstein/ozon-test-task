@@ -11,9 +11,9 @@ import (
 
 const (
 	getPostByIdQuery = `
-		SELECT id, title, body, author, allow_comments, created_at
-		FROM posts
-		WHERE id = $1
+		select id, title, body, author, allow_comments, created_at
+		from posts
+		where id = $1
 	`
 )
 
