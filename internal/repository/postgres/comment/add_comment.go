@@ -22,9 +22,6 @@ const (
 	checkParentCommentQuery = `
 		select post_id from comments where id = $1
 	`
-
-	getCommentPathQuery    = `select path from comments where id = $1`
-	updateCommentPathQuery = `update comments set path = $2 where id = $1`
 )
 
 func (r *comment) AddComment(ctx context.Context, comment models.Comment) (*models.Comment, error) {
