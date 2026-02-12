@@ -8,7 +8,6 @@ import (
 )
 
 func (r *mutationResolver) SetPostCommentsAllowed(ctx context.Context, postID string, allow bool) (*graphql.Post, error) {
-	// TODO: create validator
 	if postID == "" {
 		return nil, errors.New("postId cannot be empty")
 	}
@@ -25,5 +24,6 @@ func (r *mutationResolver) SetPostCommentsAllowed(ctx context.Context, postID st
 		Author:        out.Author,
 		AllowComments: out.AllowComments,
 		CreatedAt:     out.CreatedAt,
+		// Comments: out.Comments,
 	}, nil
 }

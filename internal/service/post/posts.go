@@ -92,6 +92,7 @@ func (s *postService) buildEdges(posts []*models.Post) []*models.PostEdge {
 	return edges
 }
 
+// rm after chage internal models for post
 func (s *postService) generateCursor(post *models.Post) string {
 	postID, _ := strconv.ParseInt(post.ID, 10, 64)
 	return cursor.Encode(post.CreatedAt, postID)

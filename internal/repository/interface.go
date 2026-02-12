@@ -18,4 +18,7 @@ type UseCase interface {
 	CheckParentCommentExists(ctx context.Context, parentID int64) (int64, error)
 	GetCommentPath(ctx context.Context, id int64) (string, error)
 	SetCommentPath(ctx context.Context, id int64, path string) error
+
+	GetCommentsByPost(ctx context.Context, postID int64, afterCreatedAt *string, afterID int64, limit int32) ([]*models.Comment, error)
+	TotalCountComments(ctx context.Context, postID int64) (int64, error)
 }
