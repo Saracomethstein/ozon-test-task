@@ -27,7 +27,7 @@ func (s *postService) GetPosts(ctx context.Context, first *int32, after *string)
 		return nil, cursorPos.err
 	}
 
-	posts, err := s.repo.GetPosts(ctx, cursorPos.afterCreatedAt, cursorPos.afterID, limit+1)
+	posts, err := s.repo.DB.Post.GetPosts(ctx, cursorPos.afterCreatedAt, cursorPos.afterID, limit+1)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func (s *postService) GetPosts(ctx context.Context, first *int32, after *string)
 
 	edges := s.buildEdges(pagePosts)
 
-	totalCount, err := s.repo.TotalCount(ctx)
+	totalCount, err := s.repo.DB.Post.TotalCount(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -92,6 +92,7 @@ func (s *postService) buildEdges(posts []*models.Post) []*models.PostEdge {
 	return edges
 }
 
+// rm after chage internal models for post
 func (s *postService) generateCursor(post *models.Post) string {
 	postID, _ := strconv.ParseInt(post.ID, 10, 64)
 	return cursor.Encode(post.CreatedAt, postID)

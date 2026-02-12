@@ -10,7 +10,7 @@ type Post {
   author: String!
   allowComments: Boolean!
   createdAt: String!
-  comments(first: Int = 20, after: String): CommentConnection!
+  comments(first: Int, after: String): CommentConnection!
 }
 
 type PostEdge {
@@ -30,9 +30,8 @@ type Comment {
   parentId: ID
   author: String!
   text: String!
-  path: String!
   createdAt: String!
-  children(first: Int = 20, after: String): CommentConnection!
+  children(first: Int, after: String): CommentConnection!
 }
 
 type CommentEdge {
@@ -48,9 +47,7 @@ type CommentConnection {
 
 type Query {
   posts(first: Int = 20, after: String): PostConnection!
-
   post(id: ID!): Post
-
   commentsByPost(postId: ID!, first: Int = 20, after: String): CommentConnection!
 }
 

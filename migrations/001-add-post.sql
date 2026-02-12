@@ -1,4 +1,4 @@
-CREATE TABLE posts (
+CREATE TABLE IF NOT EXISTS posts (
     id BIGSERIAL PRIMARY KEY,
     title TEXT NOT NULL,
     body TEXT NOT NULL,
@@ -7,5 +7,5 @@ CREATE TABLE posts (
     created_at TEXT NOT NULL DEFAULT to_char(now(), 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')
 );
 
-CREATE INDEX idx_posts_created_at_id ON posts (created_at DESC, id DESC);
+CREATE INDEX IF NOT EXISTS idx_posts_created_at_id ON posts (created_at DESC, id DESC);
     

@@ -5,10 +5,10 @@ import (
 )
 
 type postService struct {
-	repo repository.UseCase
+	repo *repository.Container
 }
 
-func New(repo repository.UseCase) UseCase {
+func New(repo *repository.Container) UseCase {
 	return &postService{
 		repo: repo,
 	}

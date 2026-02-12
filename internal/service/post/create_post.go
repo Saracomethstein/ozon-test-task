@@ -10,7 +10,7 @@ import (
 func (s *postService) CreatePost(ctx context.Context, in models.CreatePostInput) (*models.Post, error) {
 	createAt := time.Now().UTC().Format(time.RFC3339)
 
-	post, err := s.repo.SavePost(ctx, models.Post{
+	post, err := s.repo.DB.Post.SavePost(ctx, models.Post{
 		Title:         in.Title,
 		Author:        in.Author,
 		Body:          in.Body,

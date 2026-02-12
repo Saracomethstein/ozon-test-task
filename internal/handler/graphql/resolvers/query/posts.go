@@ -37,7 +37,7 @@ func (r *queryResolver) Posts(ctx context.Context, first *int32, after *string) 
 	postConnection := &graphql.PostConnection{
 		Edges:      edges,
 		PageInfo:   pageInfo,
-		TotalCount: int32(connection.TotalCount),
+		TotalCount: connection.TotalCount,
 	}
 
 	return postConnection, nil

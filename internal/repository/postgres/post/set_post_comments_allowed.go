@@ -1,4 +1,4 @@
-package repository
+package post
 
 import (
 	"context"
@@ -19,7 +19,7 @@ const (
 	`
 )
 
-func (r *repository) SetPostCommentsAllowed(ctx context.Context, postID string, allow bool) (*models.Post, error) {
+func (r *post) SetPostCommentsAllowed(ctx context.Context, postID string, allow bool) (*models.Post, error) {
 	id, err := strconv.ParseInt(postID, 10, 64)
 	if err != nil {
 		return nil, errors.New("invalid post ID format")

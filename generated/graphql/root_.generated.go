@@ -32,7 +32,9 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Comment() CommentResolver
 	Mutation() MutationResolver
+	Post() PostResolver
 	Query() QueryResolver
 	Subscription() SubscriptionResolver
 }
@@ -47,7 +49,6 @@ type ComplexityRoot struct {
 		CreatedAt func(childComplexity int) int
 		ID        func(childComplexity int) int
 		ParentID  func(childComplexity int) int
-		Path      func(childComplexity int) int
 		PostID    func(childComplexity int) int
 		Text      func(childComplexity int) int
 	}
@@ -164,13 +165,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Comment.ParentID(childComplexity), true
-
-	case "Comment.path":
-		if e.complexity.Comment.Path == nil {
-			break
-		}
-
-		return e.complexity.Comment.Path(childComplexity), true
 
 	case "Comment.postId":
 		if e.complexity.Comment.PostID == nil {
@@ -544,7 +538,7 @@ type Post {
   author: String!
   allowComments: Boolean!
   createdAt: String!
-  comments(first: Int = 20, after: String): CommentConnection!
+  comments(first: Int, after: String): CommentConnection!
 }
 
 type PostEdge {
@@ -564,9 +558,8 @@ type Comment {
   parentId: ID
   author: String!
   text: String!
-  path: String!
   createdAt: String!
-  children(first: Int = 20, after: String): CommentConnection!
+  children(first: Int, after: String): CommentConnection!
 }
 
 type CommentEdge {

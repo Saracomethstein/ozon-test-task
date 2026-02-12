@@ -1,63 +1,61 @@
 package models
 
 type AddCommentInput struct {
-	PostID   string  `db:"postId"`
-	ParentID *string `db:"parentId,omitempty"`
-	Author   string  `db:"author"`
-	Text     string  `db:"text"`
+	PostID   string
+	ParentID *string
+	Author   string
+	Text     string
 }
 
 type Comment struct {
-	ID        string             `db:"id"`
-	PostID    string             `db:"postId"`
-	ParentID  *string            `db:"parentId,omitempty"`
-	Author    string             `db:"author"`
-	Text      string             `db:"text"`
-	Path      string             `db:"path"`
-	CreatedAt string             `db:"createdAt"`
-	Children  *CommentConnection `db:"children"`
+	ID        int64
+	PostID    int64
+	ParentID  *int64
+	Author    string
+	Text      string
+	CreatedAt string
 }
 
 type CommentConnection struct {
-	Edges      []*CommentEdge `db:"edges"`
-	PageInfo   *PageInfo      `db:"pageInfo"`
-	TotalCount int32          `db:"totalCount"`
+	Edges      []*CommentEdge
+	PageInfo   *PageInfo
+	TotalCount int32
 }
 
 type CommentEdge struct {
-	Cursor string   `db:"cursor"`
-	Node   *Comment `db:"node"`
+	Cursor string
+	Node   *Comment
 }
 
 type CreatePostInput struct {
-	Title         string `db:"title"`
-	Body          string `db:"body"`
-	Author        string `db:"author"`
-	AllowComments *bool  `db:"allowComments,omitempty"`
+	Title         string
+	Body          string
+	Author        string
+	AllowComments *bool
 }
 
 type PageInfo struct {
-	EndCursor   *string `db:"endCursor,omitempty"`
-	HasNextPage bool    `db:"hasNextPage"`
+	EndCursor   *string
+	HasNextPage bool
 }
 
 type Post struct {
-	ID            string             `db:"id"`
-	Title         string             `db:"title"`
-	Body          string             `db:"body"`
-	Author        string             `db:"author"`
-	AllowComments bool               `db:"allowComments"`
-	CreatedAt     string             `db:"createdAt"`
-	Comments      *CommentConnection `db:"comments"`
+	ID            string
+	Title         string
+	Body          string
+	Author        string
+	AllowComments bool
+	CreatedAt     string
+	Comments      *CommentConnection
 }
 
 type PostConnection struct {
-	Edges      []*PostEdge `db:"edges"`
-	PageInfo   *PageInfo   `db:"pageInfo"`
-	TotalCount int32       `db:"totalCount"`
+	Edges      []*PostEdge
+	PageInfo   *PageInfo
+	TotalCount int32
 }
 
 type PostEdge struct {
-	Cursor string `db:"cursor"`
-	Node   *Post  `db:"node"`
+	Cursor string
+	Node   *Post
 }

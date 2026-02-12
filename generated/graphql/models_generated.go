@@ -15,7 +15,6 @@ type Comment struct {
 	ParentID  *string            `json:"parentId,omitempty"`
 	Author    string             `json:"author"`
 	Text      string             `json:"text"`
-	Path      string             `json:"path"`
 	CreatedAt string             `json:"createdAt"`
 	Children  *CommentConnection `json:"children"`
 }

@@ -10,7 +10,6 @@ import (
 )
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input graphql.CreatePostInput) (*graphql.Post, error) {
-	// TODO: create validator for inupt data
 	if input.Title == "" || input.Author == "" || input.Body == "" {
 		return nil, errors.New("title, author and body are required fields")
 	}
