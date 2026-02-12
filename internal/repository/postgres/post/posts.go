@@ -1,4 +1,4 @@
-package repository
+package post
 
 import (
 	"context"
@@ -21,7 +21,7 @@ const (
 	totalCountQuery = `select count(*) from posts`
 )
 
-func (r *repository) GetPosts(ctx context.Context, afterCreatedAt *string, afterID int64, limit int32) ([]*models.Post, error) {
+func (r *post) GetPosts(ctx context.Context, afterCreatedAt *string, afterID int64, limit int32) ([]*models.Post, error) {
 	rows, err := r.db.Query(ctx, getPostsQuery, afterCreatedAt, afterID, limit)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -59,7 +59,7 @@ func (r *repository) GetPosts(ctx context.Context, afterCreatedAt *string, after
 	return posts, nil
 }
 
-func (r *repository) TotalCount(ctx context.Context) (int64, error) {
+func (r *post) TotalCount(ctx context.Context) (int64, error) {
 	var count int64
 
 	err := r.db.QueryRow(ctx, totalCountQuery).Scan(&count)

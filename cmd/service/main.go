@@ -15,10 +15,14 @@ import (
 	"github.com/Saracomethstein/ozon-test-task/internal/handler/graphql/resolvers"
 	"github.com/Saracomethstein/ozon-test-task/internal/pkg/db"
 	"github.com/Saracomethstein/ozon-test-task/internal/repository"
+	"github.com/Saracomethstein/ozon-test-task/internal/repository/postgres"
 	"github.com/Saracomethstein/ozon-test-task/internal/service"
 	"github.com/Saracomethstein/ozon-test-task/internal/service/comment"
 	"github.com/Saracomethstein/ozon-test-task/internal/service/post"
 	"github.com/vektah/gqlparser/v2/ast"
+
+	commentRepository "github.com/Saracomethstein/ozon-test-task/internal/repository/postgres/comment"
+	postRepository "github.com/Saracomethstein/ozon-test-task/internal/repository/postgres/post"
 )
 
 const defaultPort = "8080"
@@ -33,9 +37,16 @@ func main() {
 
 	pgpool := db.SetupDB(*cfg)
 
-	repository := repository.New(pgpool)
+	postRepo := postRepository.New(pgpool)
+	commentRepo := commentRepository.New(pgpool)
+
+	postgresRepository := postgres.New(commentRepo, postRepo)
+
+	repository := repository.New(postgresRepository)
+
 	postService := post.New(repository)
 	commentService := comment.New(repository)
+
 	service := service.New(postService, commentService)
 
 	srv := handler.New(graphql.NewExecutableSchema(graphql.Config{Resolvers: resolvers.New(service)}))

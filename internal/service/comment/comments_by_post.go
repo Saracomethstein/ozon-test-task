@@ -36,7 +36,7 @@ func (s *commentService) GetComments(ctx context.Context, postID string, first *
 		return nil, cursorPos.err
 	}
 
-	comments, err := s.repo.GetCommentsByPost(ctx, pID, cursorPos.afterCreatedAt, cursorPos.afterID, limit+1)
+	comments, err := s.repo.DB.Comment.GetCommentsByPost(ctx, pID, cursorPos.afterCreatedAt, cursorPos.afterID, limit+1)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (s *commentService) GetComments(ctx context.Context, postID string, first *
 
 	edges := s.buildEdges(pageComments)
 
-	totalCount, err := s.repo.TotalCountComments(ctx, pID)
+	totalCount, err := s.repo.DB.Comment.TotalCountComments(ctx, pID)
 	if err != nil {
 		return nil, err
 	}

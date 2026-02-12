@@ -1,4 +1,4 @@
-package repository
+package post
 
 import (
 	"context"
@@ -15,7 +15,7 @@ const (
 	`
 )
 
-func (r *repository) SavePost(ctx context.Context, post models.Post) (models.Post, error) {
+func (r *post) SavePost(ctx context.Context, post models.Post) (models.Post, error) {
 	out := models.Post{}
 	var id int64
 

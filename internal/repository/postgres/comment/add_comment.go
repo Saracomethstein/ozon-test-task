@@ -1,4 +1,4 @@
-package repository
+package comment
 
 import (
 	"context"
@@ -27,7 +27,7 @@ const (
 	updateCommentPathQuery = `update comments set path = $2 where id = $1`
 )
 
-func (r *repository) AddComment(ctx context.Context, comment models.Comment) (*models.Comment, error) {
+func (r *comment) AddComment(ctx context.Context, comment models.Comment) (*models.Comment, error) {
 	err := r.db.QueryRow(ctx, addCommentQuery,
 		comment.PostID,
 		comment.ParentID,
@@ -43,7 +43,7 @@ func (r *repository) AddComment(ctx context.Context, comment models.Comment) (*m
 	return &comment, nil
 }
 
-func (r *repository) CheckPostAllowComments(ctx context.Context, postID int64) (bool, error) {
+func (r *comment) CheckPostAllowComments(ctx context.Context, postID int64) (bool, error) {
 	var allow bool
 
 	err := r.db.QueryRow(ctx, checkPostAllowsCommentsQuery, postID).Scan(&allow)
@@ -57,7 +57,7 @@ func (r *repository) CheckPostAllowComments(ctx context.Context, postID int64) (
 	return allow, nil
 }
 
-func (r *repository) CheckParentCommentExists(ctx context.Context, parentID int64) (int64, error) {
+func (r *comment) CheckParentCommentExists(ctx context.Context, parentID int64) (int64, error) {
 	var postID int64
 
 	err := r.db.QueryRow(ctx, checkParentCommentQuery, parentID).Scan(&postID)
@@ -71,7 +71,7 @@ func (r *repository) CheckParentCommentExists(ctx context.Context, parentID int6
 	return postID, nil
 }
 
-func (r *repository) GetCommentPath(ctx context.Context, id int64) (string, error) {
+func (r *comment) GetCommentPath(ctx context.Context, id int64) (string, error) {
 	var path string
 
 	err := r.db.QueryRow(ctx, getCommentPathQuery, id).Scan(&path)
@@ -85,7 +85,7 @@ func (r *repository) GetCommentPath(ctx context.Context, id int64) (string, erro
 	return path, nil
 }
 
-func (r *repository) SetCommentPath(ctx context.Context, id int64, path string) error {
+func (r *comment) SetCommentPath(ctx context.Context, id int64, path string) error {
 	_, err := r.db.Exec(ctx, updateCommentPathQuery, id, path)
 	return err
 }

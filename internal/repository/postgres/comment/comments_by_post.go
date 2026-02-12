@@ -1,4 +1,4 @@
-package repository
+package comment
 
 import (
 	"context"
@@ -21,7 +21,7 @@ const (
 	countCommentsByPostQuery = `select count(*) from comments where post_id = $1`
 )
 
-func (r *repository) GetCommentsByPost(ctx context.Context, postID int64, afterCreatedAt *string, afterID int64, limit int32) ([]*models.Comment, error) {
+func (r *comment) GetCommentsByPost(ctx context.Context, postID int64, afterCreatedAt *string, afterID int64, limit int32) ([]*models.Comment, error) {
 	rows, err := r.db.Query(ctx, getCommentsByPostQuery,
 		postID,
 		afterCreatedAt,
@@ -63,7 +63,7 @@ func (r *repository) GetCommentsByPost(ctx context.Context, postID int64, afterC
 	return comments, nil
 }
 
-func (r *repository) TotalCountComments(ctx context.Context, postID int64) (int64, error) {
+func (r *comment) TotalCountComments(ctx context.Context, postID int64) (int64, error) {
 	var count int64
 
 	err := r.db.QueryRow(ctx, countCommentsByPostQuery, postID).Scan(&count)

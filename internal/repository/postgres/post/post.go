@@ -1,4 +1,4 @@
-package repository
+package post
 
 import (
 	"context"
@@ -17,7 +17,7 @@ const (
 	`
 )
 
-func (r *repository) GetPostById(ctx context.Context, postID int64) (*models.Post, error) {
+func (r *post) GetPostById(ctx context.Context, postID int64) (*models.Post, error) {
 	var out models.Post
 
 	var dbID int64

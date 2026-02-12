@@ -7,7 +7,7 @@ import (
 )
 
 func (s *postService) SetPostCommentsAllowed(ctx context.Context, postID string, allow bool) (*models.Post, error) {
-	out, err := s.repo.SetPostCommentsAllowed(ctx, postID, allow)
+	out, err := s.repo.DB.Post.SetPostCommentsAllowed(ctx, postID, allow)
 	if err != nil {
 		return nil, err
 	}

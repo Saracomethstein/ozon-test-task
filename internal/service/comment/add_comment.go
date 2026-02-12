@@ -30,7 +30,7 @@ func (s *commentService) AddComment(ctx context.Context, in models.AddCommentInp
 		return nil, errors.New("postID must be greater 0")
 	}
 
-	allow, err := s.repo.CheckPostAllowComments(ctx, postID)
+	allow, err := s.repo.DB.Comment.CheckPostAllowComments(ctx, postID)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (s *commentService) AddComment(ctx context.Context, in models.AddCommentInp
 	}
 
 	now := time.Now().UTC().Format(time.RFC3339)
-	comment, err := s.repo.AddComment(ctx, models.Comment{
+	comment, err := s.repo.DB.Comment.AddComment(ctx, models.Comment{
 		PostID:    postID,
 		ParentID:  p.id,
 		Author:    in.Author,
@@ -63,7 +63,7 @@ func (s *commentService) AddComment(ctx context.Context, in models.AddCommentInp
 		comment.Path = p.path + "." + formattedID
 	}
 
-	if err := s.repo.SetCommentPath(ctx, comment.ID, comment.Path); err != nil {
+	if err := s.repo.DB.Comment.SetCommentPath(ctx, comment.ID, comment.Path); err != nil {
 		return nil, err
 	}
 
@@ -80,7 +80,7 @@ func (s *commentService) processParent(ctx context.Context, parentIDStr *string,
 		return nil, errors.New("invalid parentID format")
 	}
 
-	parentPostID, err := s.repo.CheckParentCommentExists(ctx, pid)
+	parentPostID, err := s.repo.DB.Comment.CheckParentCommentExists(ctx, pid)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func (s *commentService) processParent(ctx context.Context, parentIDStr *string,
 		return nil, errors.New("parent comment does not belong to this post")
 	}
 
-	path, err := s.repo.GetCommentPath(ctx, pid)
+	path, err := s.repo.DB.Comment.GetCommentPath(ctx, pid)
 	if err != nil {
 		return nil, err
 	}
