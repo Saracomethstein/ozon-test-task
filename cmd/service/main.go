@@ -35,7 +35,7 @@ func main() {
 
 	repository := repository.New(pgpool)
 	postService := post.New(repository)
-	commentService := comment.New()
+	commentService := comment.New(repository)
 	service := service.New(postService, commentService)
 
 	srv := handler.New(graphql.NewExecutableSchema(graphql.Config{Resolvers: resolvers.New(service)}))

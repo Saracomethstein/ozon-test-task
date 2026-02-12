@@ -1,5 +1,11 @@
 package comment
 
+import (
+	"context"
+
+	"github.com/Saracomethstein/ozon-test-task/internal/models"
+)
+
 type UseCase interface {
-	// methods
+	AddComment(ctx context.Context, in models.AddCommentInput) (*models.Comment, error)
 }

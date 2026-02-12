@@ -21,6 +21,7 @@ func (r *queryResolver) Posts(ctx context.Context, first *int32, after *string) 
 			Author:        edge.Node.Author,
 			AllowComments: edge.Node.AllowComments,
 			CreatedAt:     edge.Node.CreatedAt,
+			// Comments: edge.Node.Comment,
 		}
 
 		edges = append(edges, &graphql.PostEdge{

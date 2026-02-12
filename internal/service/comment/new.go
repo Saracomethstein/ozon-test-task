@@ -1,7 +1,13 @@
 package comment
 
-type commentService struct{}
+import "github.com/Saracomethstein/ozon-test-task/internal/repository"
 
-func New() UseCase {
-	return &commentService{}
+type commentService struct {
+	repo repository.UseCase
+}
+
+func New(repo repository.UseCase) UseCase {
+	return &commentService{
+		repo: repo,
+	}
 }

@@ -8,9 +8,9 @@ type AddCommentInput struct {
 }
 
 type Comment struct {
-	ID        string             `db:"id"`
-	PostID    string             `db:"postId"`
-	ParentID  *string            `db:"parentId,omitempty"`
+	ID        int64              `db:"id"`
+	PostID    int64              `db:"postId"`
+	ParentID  *int64             `db:"parentId,omitempty"`
 	Author    string             `db:"author"`
 	Text      string             `db:"text"`
 	Path      string             `db:"path"`

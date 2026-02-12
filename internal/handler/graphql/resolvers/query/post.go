@@ -20,5 +20,6 @@ func (r *queryResolver) Post(ctx context.Context, id string) (*graphql.Post, err
 		Author:        post.Author,
 		AllowComments: post.AllowComments,
 		CreatedAt:     post.CreatedAt,
+		// Comments: post.Comments,
 	}, nil
 }
