@@ -12,6 +12,8 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/Saracomethstein/ozon-test-task/generated/graphql"
 	"github.com/Saracomethstein/ozon-test-task/internal/cfg"
+	"github.com/Saracomethstein/ozon-test-task/internal/graphql/dataloader"
+	"github.com/Saracomethstein/ozon-test-task/internal/graphql/middleware"
 	"github.com/Saracomethstein/ozon-test-task/internal/handler/graphql/resolvers"
 	"github.com/Saracomethstein/ozon-test-task/internal/pkg/db"
 	"github.com/Saracomethstein/ozon-test-task/internal/repository"
@@ -39,17 +41,18 @@ func main() {
 
 	postRepo := postRepository.New(pgpool)
 	commentRepo := commentRepository.New(pgpool)
-
 	postgresRepository := postgres.New(commentRepo, postRepo)
 
 	repository := repository.New(postgresRepository)
-
 	postService := post.New(repository)
 	commentService := comment.New(repository)
 
+	loader := dataloader.NewCommentLoader(repository)
 	service := service.New(postService, commentService)
 
 	srv := handler.New(graphql.NewExecutableSchema(graphql.Config{Resolvers: resolvers.New(service)}))
+
+	handlerWithDataloader := middleware.DataloaderMiddleware(*loader)(srv)
 
 	srv.AddTransport(transport.Options{})
 	srv.AddTransport(transport.GET{})
@@ -63,7 +66,8 @@ func main() {
 	})
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+	http.Handle("/query", handlerWithDataloader)
+	http.Handle("/playground", playground.Handler("GraphQL playground", "/query"))
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))

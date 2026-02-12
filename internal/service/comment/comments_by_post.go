@@ -19,12 +19,11 @@ type cursorPosition struct {
 	err            error
 }
 
-func (s *commentService) GetComments(ctx context.Context, postID string, first *int32, after *string) (*models.CommentConnection, error) {
+func (s *commentService) GetRootComments(ctx context.Context, postID string, first *int32, after *string) (*models.CommentConnection, error) {
 	pID, err := strconv.ParseInt(postID, 10, 64)
 	if err != nil {
 		return nil, errors.New("invalid postID format")
 	}
-
 	if pID <= 0 {
 		return nil, errors.New("postID must be greater 0")
 	}
@@ -36,7 +35,7 @@ func (s *commentService) GetComments(ctx context.Context, postID string, first *
 		return nil, cursorPos.err
 	}
 
-	comments, err := s.repo.DB.Comment.GetCommentsByPost(ctx, pID, cursorPos.afterCreatedAt, cursorPos.afterID, limit+1)
+	comments, err := s.repo.DB.Comment.GetRootCommentsByPost(ctx, pID, cursorPos.afterCreatedAt, cursorPos.afterID, limit+1)
 	if err != nil {
 		return nil, err
 	}
@@ -49,6 +48,36 @@ func (s *commentService) GetComments(ctx context.Context, postID string, first *
 	if err != nil {
 		return nil, err
 	}
+
+	return s.buildConnection(edges, hasNextPage, totalCount), nil
+}
+
+func (s *commentService) GetChildComments(ctx context.Context, parentID string, first *int32, after *string) (*models.CommentConnection, error) {
+	pID, err := strconv.ParseInt(parentID, 10, 64)
+	if err != nil || pID <= 0 {
+		return nil, errors.New("invalid parentID")
+	}
+	if pID <= 0 {
+		return nil, errors.New("postID must be greater 0")
+	}
+
+	limit := s.getLimit(first)
+
+	cursorPos := s.parseCursor(after)
+	if cursorPos.err != nil {
+		return nil, cursorPos.err
+	}
+
+	comments, err := s.repo.DB.Comment.GetChildComments(ctx, pID, cursorPos.afterCreatedAt, cursorPos.afterID, limit+1)
+	if err != nil {
+		return nil, err
+	}
+
+	hasNextPage, pageComments := s.extractPage(comments, limit)
+
+	edges := s.buildEdges(pageComments)
+
+	totalCount := int64(len(pageComments))
 
 	return s.buildConnection(edges, hasNextPage, totalCount), nil
 }

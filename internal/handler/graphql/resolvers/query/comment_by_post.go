@@ -13,33 +13,25 @@ func (r *queryResolver) CommentsByPost(ctx context.Context, postID string, first
 		return nil, errors.New("postID cannot be empty")
 	}
 
-	connection, err := r.service.CommentService.GetComments(ctx, postID, first, after)
+	connection, err := r.service.CommentService.GetRootComments(ctx, postID, first, after)
 	if err != nil {
 		return nil, err
 	}
 
-	edges := make([]*graphql.CommentEdge, 0, len(connection.Edges))
-	for _, edge := range connection.Edges {
-		var parentIDPtr *string
-		if edge.Node.ParentID != nil {
-			pid := strconv.FormatInt(*edge.Node.ParentID, 10)
-			parentIDPtr = &pid
-		}
-
+	edges := make([]*graphql.CommentEdge, len(connection.Edges))
+	for i, edge := range connection.Edges {
 		node := &graphql.Comment{
 			ID:        strconv.FormatInt(edge.Node.ID, 10),
 			PostID:    strconv.FormatInt(edge.Node.PostID, 10),
-			ParentID:  parentIDPtr,
+			ParentID:  nil,
 			Author:    edge.Node.Author,
 			Text:      edge.Node.Text,
-			Path:      edge.Node.Path,
 			CreatedAt: edge.Node.CreatedAt,
 		}
-
-		edges = append(edges, &graphql.CommentEdge{
+		edges[i] = &graphql.CommentEdge{
 			Cursor: edge.Cursor,
 			Node:   node,
-		})
+		}
 	}
 
 	pageInfo := &graphql.PageInfo{
@@ -47,11 +39,9 @@ func (r *queryResolver) CommentsByPost(ctx context.Context, postID string, first
 		HasNextPage: connection.PageInfo.HasNextPage,
 	}
 
-	commentsConnection := &graphql.CommentConnection{
+	return &graphql.CommentConnection{
 		Edges:      edges,
 		PageInfo:   pageInfo,
 		TotalCount: connection.TotalCount,
-	}
-
-	return commentsConnection, nil
+	}, nil
 }

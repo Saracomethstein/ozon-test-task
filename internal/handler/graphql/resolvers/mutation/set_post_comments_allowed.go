@@ -24,6 +24,5 @@ func (r *mutationResolver) SetPostCommentsAllowed(ctx context.Context, postID st
 		Author:        out.Author,
 		AllowComments: out.AllowComments,
 		CreatedAt:     out.CreatedAt,
-		// Comments: out.Comments,
 	}, nil
 }

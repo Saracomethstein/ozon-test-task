@@ -10,8 +10,8 @@ import (
 
 const (
 	addCommentQuery = `
-		insert into comments (post_id, parent_id, author, body, path, created_at)
-		values ($1, $2, $3, $4, $5, $6)
+		insert into comments (post_id, parent_id, author, body, created_at)
+		values ($1, $2, $3, $4, $5)
 		returning id
 	`
 
@@ -33,7 +33,6 @@ func (r *comment) AddComment(ctx context.Context, comment models.Comment) (*mode
 		comment.ParentID,
 		comment.Author,
 		comment.Text,
-		comment.Path,
 		comment.CreatedAt,
 	).Scan(&comment.ID)
 	if err != nil {
@@ -69,23 +68,4 @@ func (r *comment) CheckParentCommentExists(ctx context.Context, parentID int64) 
 	}
 
 	return postID, nil
-}
-
-func (r *comment) GetCommentPath(ctx context.Context, id int64) (string, error) {
-	var path string
-
-	err := r.db.QueryRow(ctx, getCommentPathQuery, id).Scan(&path)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return "", errors.New("comment not found")
-		}
-		return "", err
-	}
-
-	return path, nil
-}
-
-func (r *comment) SetCommentPath(ctx context.Context, id int64, path string) error {
-	_, err := r.db.Exec(ctx, updateCommentPathQuery, id, path)
-	return err
 }

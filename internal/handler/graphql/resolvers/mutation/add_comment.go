@@ -36,7 +36,6 @@ func (r *mutationResolver) AddComment(ctx context.Context, input graphql.AddComm
 		ParentID:  parentIDPtr,
 		Author:    comment.Author,
 		Text:      comment.Text,
-		Path:      comment.Path,
 		CreatedAt: comment.CreatedAt,
 	}
 

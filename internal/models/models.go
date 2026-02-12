@@ -13,9 +13,7 @@ type Comment struct {
 	ParentID  *int64
 	Author    string
 	Text      string
-	Path      string
 	CreatedAt string
-	Children  *CommentConnection
 }
 
 type CommentConnection struct {
