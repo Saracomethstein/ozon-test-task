@@ -1,6 +1,6 @@
 BINARY_NAME=build/ozon-test-task
 
-.PHONY: all docker-build docker-up docker-down deps mocks build clean
+.PHONY: all docker-build docker-up docker-down deps mocks build clean run
 
 all: docker-up
 

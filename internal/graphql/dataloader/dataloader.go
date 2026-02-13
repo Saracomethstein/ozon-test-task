@@ -36,7 +36,7 @@ func (l *CommentLoader) BatchGetChildren(ctx context.Context, keys dataloader.Ke
 		return errResults
 	}
 
-	groups := make(map[int64][]*models.Comment)
+	groups := make(map[int64][]*models.Comment, len(parentIDs))
 	for _, c := range comments {
 		if c.ParentID != nil {
 			groups[*c.ParentID] = append(groups[*c.ParentID], c)
