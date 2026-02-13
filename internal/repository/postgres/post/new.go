@@ -1,17 +1,29 @@
 package post
 
 import (
-	"github.com/jackc/pgx/v4/pgxpool"
+	"context"
+
+	"github.com/jackc/pgx/v4"
+	"github.com/pkg/errors"
 
 	"github.com/Saracomethstein/ozon-test-task/internal/repository"
 )
 
+var (
+	ErrPostNotFound = errors.New("post not found")
+)
+
 type post struct {
-	db *pgxpool.Pool
+	db DB
 }
 
-func New(db *pgxpool.Pool) repository.PostUC {
+func New(db DB) repository.PostUC {
 	return &post{
 		db: db,
 	}
+}
+
+type DB interface {
+	QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
+	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
 }

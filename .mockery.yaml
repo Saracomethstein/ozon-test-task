@@ -4,7 +4,7 @@ packages:
   github.com/Saracomethstein/ozon-test-task:
     config:
       dir: "{{.InterfaceDir}}/mocks"
-      filename: "mocks.go"
       outpkg: "mocks"
+      mockname: "Mock{{.InterfaceName}}"
       recursive: true
       all: true

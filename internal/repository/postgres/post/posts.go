@@ -2,8 +2,8 @@ package post
 
 import (
 	"context"
-	"database/sql"
 
+	"github.com/jackc/pgx/v4"
 	"github.com/pkg/errors"
 
 	"github.com/Saracomethstein/ozon-test-task/internal/models"
@@ -24,7 +24,7 @@ const (
 func (r *post) Get(ctx context.Context, afterCreatedAt *string, afterID int64, limit int32) ([]*models.Post, error) {
 	rows, err := r.db.Query(ctx, getPostsQuery, afterCreatedAt, afterID, limit)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return []*models.Post{}, nil
 		}
 		return nil, err
@@ -61,9 +61,6 @@ func (r *post) TotalCount(ctx context.Context) (int64, error) {
 	var count int64
 
 	err := r.db.QueryRow(ctx, totalCountQuery).Scan(&count)
-	if err != nil {
-		return 0, err
-	}
 
-	return count, nil
+	return count, err
 }

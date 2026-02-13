@@ -34,7 +34,6 @@ type Config struct {
 type ResolverRoot interface {
 	Comment() CommentResolver
 	Mutation() MutationResolver
-	Post() PostResolver
 	Query() QueryResolver
 	Subscription() SubscriptionResolver
 }
@@ -79,7 +78,6 @@ type ComplexityRoot struct {
 		AllowComments func(childComplexity int) int
 		Author        func(childComplexity int) int
 		Body          func(childComplexity int) int
-		Comments      func(childComplexity int, first *int32, after *string) int
 		CreatedAt     func(childComplexity int) int
 		ID            func(childComplexity int) int
 		Title         func(childComplexity int) int
@@ -285,18 +283,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Post.Body(childComplexity), true
-
-	case "Post.comments":
-		if e.complexity.Post.Comments == nil {
-			break
-		}
-
-		args, err := ec.field_Post_comments_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Post.Comments(childComplexity, args["first"].(*int32), args["after"].(*string)), true
 
 	case "Post.createdAt":
 		if e.complexity.Post.CreatedAt == nil {
@@ -538,7 +524,6 @@ type Post {
   author: String!
   allowComments: Boolean!
   createdAt: String!
-  comments(first: Int, after: String): CommentConnection!
 }
 
 type PostEdge {
@@ -575,9 +560,7 @@ type CommentConnection {
 
 type Query {
   posts(first: Int = 20, after: String): PostConnection!
-
   post(id: ID!): Post
-
   commentsByPost(postId: ID!, first: Int = 20, after: String): CommentConnection!
 }
 

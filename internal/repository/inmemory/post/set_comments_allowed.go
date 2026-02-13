@@ -3,8 +3,6 @@ package post
 import (
 	"context"
 
-	"github.com/pkg/errors"
-
 	"github.com/Saracomethstein/ozon-test-task/internal/models"
 )
 
@@ -14,7 +12,7 @@ func (r *post) SetCommentsAllowed(ctx context.Context, postID int64, allow bool)
 
 	post, ok := r.posts[postID]
 	if !ok {
-		return nil, errors.New("post not found")
+		return nil, ErrPostNotFound
 	}
 
 	post.AllowComments = allow

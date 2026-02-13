@@ -2,8 +2,8 @@ package post
 
 import (
 	"context"
-	"database/sql"
 
+	"github.com/jackc/pgx/v4"
 	"github.com/pkg/errors"
 
 	"github.com/Saracomethstein/ozon-test-task/internal/models"
@@ -29,8 +29,8 @@ func (r *post) GetByID(ctx context.Context, postID int64) (*models.Post, error) 
 		&out.CreatedAt,
 	)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, errors.New("post not found")
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrPostNotFound
 		}
 		return nil, err
 	}

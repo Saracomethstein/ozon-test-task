@@ -58,9 +58,6 @@ func (s *Service) GetChildComments(ctx context.Context, parentID string, first *
 	if err != nil || pID <= 0 {
 		return nil, errors.New("invalid parentID")
 	}
-	if pID <= 0 {
-		return nil, errors.New("postID must be greater 0")
-	}
 
 	limit := s.getLimit(first)
 

@@ -121,7 +121,7 @@ func (r *comment) GetChildBatch(ctx context.Context, parentIDs []int64) ([]*mode
 	}
 	defer rows.Close()
 
-	var comments []*models.Comment
+	comments := make([]*models.Comment, 0)
 	for rows.Next() {
 		c := models.Comment{}
 
