@@ -4,8 +4,9 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/Saracomethstein/ozon-test-task/generated/graphql"
 	"github.com/pkg/errors"
+
+	"github.com/Saracomethstein/ozon-test-task/generated/graphql"
 )
 
 func (r *queryResolver) CommentsByPost(ctx context.Context, postID string, first *int32, after *string) (*graphql.CommentConnection, error) {

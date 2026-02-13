@@ -7,14 +7,11 @@ import (
 )
 
 type CommentUC interface {
-	// TODO: rename func for package 'comment'
-
-	AddComment(ctx context.Context, comment models.Comment) (*models.Comment, error)
-	CheckPostAllowComments(ctx context.Context, postID int64) (bool, error)
-	CheckParentCommentExists(ctx context.Context, parentID int64) (int64, error)
-
-	GetRootCommentsByPost(ctx context.Context, postID int64, afterCreatedAt *string, afterID int64, limit int32) ([]*models.Comment, error)
-	TotalCountComments(ctx context.Context, postID int64) (int64, error)
-	GetChildComments(ctx context.Context, parentID int64, afterCreatedAt *string, afterID int64, limit int32) ([]*models.Comment, error)
-	GetChildCommentsBatch(ctx context.Context, parentIDs []int64) ([]*models.Comment, error)
+	Add(ctx context.Context, comment models.Comment) (*models.Comment, error)
+	CheckAllowComments(ctx context.Context, postID int64) (bool, error)
+	CheckParentExists(ctx context.Context, parentID int64) (int64, error)
+	GetRootByPost(ctx context.Context, postID int64, afterCreatedAt *string, afterID int64, limit int32) ([]*models.Comment, error)
+	TotalCount(ctx context.Context, postID int64) (int64, error)
+	GetChild(ctx context.Context, parentID int64, afterCreatedAt *string, afterID int64, limit int32) ([]*models.Comment, error)
+	GetChildBatch(ctx context.Context, parentIDs []int64) ([]*models.Comment, error)
 }

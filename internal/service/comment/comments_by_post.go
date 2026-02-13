@@ -4,9 +4,10 @@ import (
 	"context"
 	"strconv"
 
+	"github.com/pkg/errors"
+
 	"github.com/Saracomethstein/ozon-test-task/internal/models"
 	"github.com/Saracomethstein/ozon-test-task/internal/utils/cursor"
-	"github.com/pkg/errors"
 )
 
 const (
@@ -35,7 +36,7 @@ func (s *Service) GetRootComments(ctx context.Context, postID string, first *int
 		return nil, cursorPos.err
 	}
 
-	comments, err := s.repo.GetRootCommentsByPost(ctx, pID, cursorPos.afterCreatedAt, cursorPos.afterID, limit+1)
+	comments, err := s.repo.GetRootByPost(ctx, pID, cursorPos.afterCreatedAt, cursorPos.afterID, limit+1)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +45,7 @@ func (s *Service) GetRootComments(ctx context.Context, postID string, first *int
 
 	edges := s.buildEdges(pageComments)
 
-	totalCount, err := s.repo.TotalCountComments(ctx, pID)
+	totalCount, err := s.repo.TotalCount(ctx, pID)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +69,7 @@ func (s *Service) GetChildComments(ctx context.Context, parentID string, first *
 		return nil, cursorPos.err
 	}
 
-	comments, err := s.repo.GetChildComments(ctx, pID, cursorPos.afterCreatedAt, cursorPos.afterID, limit+1)
+	comments, err := s.repo.GetChild(ctx, pID, cursorPos.afterCreatedAt, cursorPos.afterID, limit+1)
 	if err != nil {
 		return nil, err
 	}

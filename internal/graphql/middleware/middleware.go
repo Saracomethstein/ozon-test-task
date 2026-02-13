@@ -5,8 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	myLoader "github.com/Saracomethstein/ozon-test-task/internal/graphql/dataloader"
 	"github.com/graph-gophers/dataloader"
+
+	myLoader "github.com/Saracomethstein/ozon-test-task/internal/graphql/dataloader"
 )
 
 func DataloaderMiddleware(commentLoader myLoader.CommentLoader) func(http.Handler) http.Handler {

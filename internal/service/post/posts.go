@@ -2,11 +2,11 @@ package post
 
 import (
 	"context"
-	"strconv"
+
+	"github.com/pkg/errors"
 
 	"github.com/Saracomethstein/ozon-test-task/internal/models"
 	"github.com/Saracomethstein/ozon-test-task/internal/utils/cursor"
-	"github.com/pkg/errors"
 )
 
 const (
@@ -27,7 +27,7 @@ func (s *Post) GetPosts(ctx context.Context, first *int32, after *string) (*mode
 		return nil, cursorPos.err
 	}
 
-	posts, err := s.repo.GetPosts(ctx, cursorPos.afterCreatedAt, cursorPos.afterID, limit+1)
+	posts, err := s.repo.Get(ctx, cursorPos.afterCreatedAt, cursorPos.afterID, limit+1)
 	if err != nil {
 		return nil, err
 	}
@@ -83,19 +83,13 @@ func (s *Post) buildEdges(posts []*models.Post) []*models.PostEdge {
 
 	for _, post := range posts {
 		edge := &models.PostEdge{
-			Cursor: s.generateCursor(post),
+			Cursor: cursor.Encode(post.CreatedAt, post.ID),
 			Node:   post,
 		}
 		edges = append(edges, edge)
 	}
 
 	return edges
-}
-
-// rm after chage internal models for post
-func (s *Post) generateCursor(post *models.Post) string {
-	postID, _ := strconv.ParseInt(post.ID, 10, 64)
-	return cursor.Encode(post.CreatedAt, postID)
 }
 
 func (s *Post) getEndCursor(edges []*models.PostEdge) *string {

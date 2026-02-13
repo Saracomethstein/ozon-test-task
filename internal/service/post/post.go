@@ -23,7 +23,7 @@ func (s *Post) GetPostById(ctx context.Context, postID string) (*models.Post, er
 		return nil, errors.New("post ID must be a positive integer")
 	}
 
-	post, err := s.repo.GetPostById(ctx, id)
+	post, err := s.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}

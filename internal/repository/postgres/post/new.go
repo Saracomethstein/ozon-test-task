@@ -1,8 +1,9 @@
 package post
 
 import (
-	"github.com/Saracomethstein/ozon-test-task/internal/repository"
 	"github.com/jackc/pgx/v4/pgxpool"
+
+	"github.com/Saracomethstein/ozon-test-task/internal/repository"
 )
 
 type post struct {

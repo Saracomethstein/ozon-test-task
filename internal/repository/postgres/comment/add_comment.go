@@ -4,8 +4,9 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/Saracomethstein/ozon-test-task/internal/models"
 	"github.com/pkg/errors"
+
+	"github.com/Saracomethstein/ozon-test-task/internal/models"
 )
 
 const (
@@ -24,7 +25,7 @@ const (
 	`
 )
 
-func (r *comment) AddComment(ctx context.Context, comment models.Comment) (*models.Comment, error) {
+func (r *comment) Add(ctx context.Context, comment models.Comment) (*models.Comment, error) {
 	err := r.db.QueryRow(ctx, addCommentQuery,
 		comment.PostID,
 		comment.ParentID,
@@ -39,7 +40,7 @@ func (r *comment) AddComment(ctx context.Context, comment models.Comment) (*mode
 	return &comment, nil
 }
 
-func (r *comment) CheckPostAllowComments(ctx context.Context, postID int64) (bool, error) {
+func (r *comment) CheckAllowComments(ctx context.Context, postID int64) (bool, error) {
 	var allow bool
 
 	err := r.db.QueryRow(ctx, checkPostAllowsCommentsQuery, postID).Scan(&allow)
@@ -53,7 +54,7 @@ func (r *comment) CheckPostAllowComments(ctx context.Context, postID int64) (boo
 	return allow, nil
 }
 
-func (r *comment) CheckParentCommentExists(ctx context.Context, parentID int64) (int64, error) {
+func (r *comment) CheckParentExists(ctx context.Context, parentID int64) (int64, error) {
 	var postID int64
 
 	err := r.db.QueryRow(ctx, checkParentCommentQuery, parentID).Scan(&postID)

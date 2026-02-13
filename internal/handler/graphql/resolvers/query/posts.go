@@ -2,6 +2,7 @@ package query
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/Saracomethstein/ozon-test-task/generated/graphql"
 )
@@ -15,7 +16,7 @@ func (r *queryResolver) Posts(ctx context.Context, first *int32, after *string) 
 	edges := make([]*graphql.PostEdge, 0, len(connection.Edges))
 	for _, edge := range connection.Edges {
 		node := &graphql.Post{
-			ID:            edge.Node.ID,
+			ID:            strconv.FormatInt(edge.Node.ID, 10),
 			Title:         edge.Node.Title,
 			Body:          edge.Node.Body,
 			Author:        edge.Node.Author,

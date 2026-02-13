@@ -2,11 +2,10 @@ package cursor
 
 import (
 	"encoding/base64"
-
-	"github.com/pkg/errors"
-
 	"strconv"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 const (

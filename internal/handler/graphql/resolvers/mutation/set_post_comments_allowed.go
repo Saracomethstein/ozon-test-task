@@ -2,9 +2,11 @@ package mutation
 
 import (
 	"context"
+	"strconv"
+
+	"github.com/pkg/errors"
 
 	"github.com/Saracomethstein/ozon-test-task/generated/graphql"
-	"github.com/pkg/errors"
 )
 
 func (r *mutationResolver) SetPostCommentsAllowed(ctx context.Context, postID string, allow bool) (*graphql.Post, error) {
@@ -18,7 +20,7 @@ func (r *mutationResolver) SetPostCommentsAllowed(ctx context.Context, postID st
 	}
 
 	return &graphql.Post{
-		ID:            out.ID,
+		ID:            strconv.FormatInt(out.ID, 10),
 		Title:         out.Title,
 		Body:          out.Body,
 		Author:        out.Author,

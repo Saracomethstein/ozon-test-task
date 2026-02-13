@@ -20,7 +20,7 @@ func (s *Service) AddComment(ctx context.Context, in models.AddCommentInput) (*m
 		return nil, errors.New("postID must be greater 0")
 	}
 
-	allow, err := s.repo.CheckPostAllowComments(ctx, postID)
+	allow, err := s.repo.CheckAllowComments(ctx, postID)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +34,7 @@ func (s *Service) AddComment(ctx context.Context, in models.AddCommentInput) (*m
 	}
 
 	now := time.Now().UTC().Format(time.RFC3339)
-	comment, err := s.repo.AddComment(ctx, models.Comment{
+	comment, err := s.repo.Add(ctx, models.Comment{
 		PostID:    postID,
 		ParentID:  parentID,
 		Author:    in.Author,
@@ -58,7 +58,7 @@ func (s *Service) processParent(ctx context.Context, parentIDStr *string, postID
 		return nil, errors.New("invalid parentID format")
 	}
 
-	parentPostID, err := s.repo.CheckParentCommentExists(ctx, pid)
+	parentPostID, err := s.repo.CheckParentExists(ctx, pid)
 	if err != nil {
 		return nil, err
 	}

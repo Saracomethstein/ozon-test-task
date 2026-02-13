@@ -19,16 +19,15 @@ const (
 	`
 )
 
-func (r *post) SetPostCommentsAllowed(ctx context.Context, postID string, allow bool) (*models.Post, error) {
+func (r *post) SetCommentsAllowed(ctx context.Context, postID string, allow bool) (*models.Post, error) {
 	id, err := strconv.ParseInt(postID, 10, 64)
 	if err != nil {
 		return nil, errors.New("invalid post ID format")
 	}
 
 	var out models.Post
-	var dbID int64
 	err = r.db.QueryRow(ctx, setPostCommentsAllowedQuery, id, allow).Scan(
-		&dbID,
+		&out.ID,
 		&out.Title,
 		&out.Body,
 		&out.Author,
@@ -42,6 +41,5 @@ func (r *post) SetPostCommentsAllowed(ctx context.Context, postID string, allow 
 		return nil, err
 	}
 
-	out.ID = strconv.FormatInt(dbID, 10)
 	return &out, nil
 }

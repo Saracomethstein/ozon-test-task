@@ -6,10 +6,10 @@ import (
 	"log"
 	"time"
 
-	"github.com/Saracomethstein/ozon-test-task/internal/cfg"
-	"github.com/Saracomethstein/ozon-test-task/internal/repository"
 	"github.com/jackc/pgx/v4/pgxpool"
 
+	"github.com/Saracomethstein/ozon-test-task/internal/cfg"
+	"github.com/Saracomethstein/ozon-test-task/internal/repository"
 	memComment "github.com/Saracomethstein/ozon-test-task/internal/repository/inmemory/comment"
 	memPost "github.com/Saracomethstein/ozon-test-task/internal/repository/inmemory/post"
 	pgComment "github.com/Saracomethstein/ozon-test-task/internal/repository/postgres/comment"
