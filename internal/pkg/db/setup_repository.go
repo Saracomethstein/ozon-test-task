@@ -17,17 +17,17 @@ import (
 )
 
 func NewPostgresContainer(db *pgxpool.Pool) *repository.Container {
-	return repository.New(
-		pgPost.New(db),
-		pgComment.New(db),
-	)
+	rPost := pgPost.New(db)
+	rComment := pgComment.New(db)
+
+	return repository.New(rPost, rComment)
 }
 
 func NewInmemoryContainer() *repository.Container {
-	return repository.New(
-		memPost.New(),
-		memComment.New(),
-	)
+	rPost := memPost.New()
+	rComment := memComment.New(rPost)
+
+	return repository.New(rPost, rComment)
 }
 
 func SetupDB(config cfg.Config) *pgxpool.Pool {

@@ -3,7 +3,6 @@ package post
 import (
 	"context"
 	"database/sql"
-	"strconv"
 
 	"github.com/pkg/errors"
 
@@ -19,14 +18,10 @@ const (
 	`
 )
 
-func (r *post) SetCommentsAllowed(ctx context.Context, postID string, allow bool) (*models.Post, error) {
-	id, err := strconv.ParseInt(postID, 10, 64)
-	if err != nil {
-		return nil, errors.New("invalid post ID format")
-	}
-
+func (r *post) SetCommentsAllowed(ctx context.Context, postID int64, allow bool) (*models.Post, error) {
 	var out models.Post
-	err = r.db.QueryRow(ctx, setPostCommentsAllowedQuery, id, allow).Scan(
+
+	err := r.db.QueryRow(ctx, setPostCommentsAllowedQuery, postID, allow).Scan(
 		&out.ID,
 		&out.Title,
 		&out.Body,
