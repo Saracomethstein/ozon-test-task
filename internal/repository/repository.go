@@ -1,18 +1,16 @@
 package repository
 
-import "github.com/Saracomethstein/ozon-test-task/internal/repository/postgres"
-
 type Container struct {
-	DB *postgres.Container
-	// mem inmemory.UseCase
+	Post    PostUC
+	Comment CommentUC
 }
 
 func New(
-	db *postgres.Container,
-	// mem inmemory.UseCase,
+	postRepo PostUC,
+	commentRepo CommentUC,
 ) *Container {
 	return &Container{
-		DB: db,
-		// mem: mem,
+		Post:    postRepo,
+		Comment: commentRepo,
 	}
 }

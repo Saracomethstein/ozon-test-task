@@ -19,7 +19,7 @@ type cursorPosition struct {
 	err            error
 }
 
-func (s *postService) GetPosts(ctx context.Context, first *int32, after *string) (*models.PostConnection, error) {
+func (s *Post) GetPosts(ctx context.Context, first *int32, after *string) (*models.PostConnection, error) {
 	limit := s.getLimit(first)
 
 	cursorPos := s.parseCursor(after)
@@ -27,7 +27,7 @@ func (s *postService) GetPosts(ctx context.Context, first *int32, after *string)
 		return nil, cursorPos.err
 	}
 
-	posts, err := s.repo.DB.Post.GetPosts(ctx, cursorPos.afterCreatedAt, cursorPos.afterID, limit+1)
+	posts, err := s.repo.GetPosts(ctx, cursorPos.afterCreatedAt, cursorPos.afterID, limit+1)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func (s *postService) GetPosts(ctx context.Context, first *int32, after *string)
 
 	edges := s.buildEdges(pagePosts)
 
-	totalCount, err := s.repo.DB.Post.TotalCount(ctx)
+	totalCount, err := s.repo.TotalCount(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (s *postService) GetPosts(ctx context.Context, first *int32, after *string)
 	return s.buildConnection(edges, hasNextPage, totalCount), nil
 }
 
-func (s *postService) getLimit(first *int32) int32 {
+func (s *Post) getLimit(first *int32) int32 {
 	if first != nil && *first > 0 {
 		return *first
 	}
@@ -52,7 +52,7 @@ func (s *postService) getLimit(first *int32) int32 {
 	return defaultPageLimit
 }
 
-func (s *postService) parseCursor(after *string) cursorPosition {
+func (s *Post) parseCursor(after *string) cursorPosition {
 	if after == nil || *after == "" {
 		return cursorPosition{}
 	}
@@ -70,7 +70,7 @@ func (s *postService) parseCursor(after *string) cursorPosition {
 	}
 }
 
-func (s *postService) extractPage(posts []*models.Post, limit int32) (hasNextPage bool, page []*models.Post) {
+func (s *Post) extractPage(posts []*models.Post, limit int32) (hasNextPage bool, page []*models.Post) {
 	if len(posts) > int(limit) {
 		return true, posts[:limit]
 	}
@@ -78,7 +78,7 @@ func (s *postService) extractPage(posts []*models.Post, limit int32) (hasNextPag
 	return false, posts
 }
 
-func (s *postService) buildEdges(posts []*models.Post) []*models.PostEdge {
+func (s *Post) buildEdges(posts []*models.Post) []*models.PostEdge {
 	edges := make([]*models.PostEdge, 0, len(posts))
 
 	for _, post := range posts {
@@ -93,12 +93,12 @@ func (s *postService) buildEdges(posts []*models.Post) []*models.PostEdge {
 }
 
 // rm after chage internal models for post
-func (s *postService) generateCursor(post *models.Post) string {
+func (s *Post) generateCursor(post *models.Post) string {
 	postID, _ := strconv.ParseInt(post.ID, 10, 64)
 	return cursor.Encode(post.CreatedAt, postID)
 }
 
-func (s *postService) getEndCursor(edges []*models.PostEdge) *string {
+func (s *Post) getEndCursor(edges []*models.PostEdge) *string {
 	if len(edges) == 0 {
 		return nil
 	}
@@ -106,7 +106,7 @@ func (s *postService) getEndCursor(edges []*models.PostEdge) *string {
 	return &edges[len(edges)-1].Cursor
 }
 
-func (s *postService) buildConnection(edges []*models.PostEdge, hasNextPage bool, totalCount int64) *models.PostConnection {
+func (s *Post) buildConnection(edges []*models.PostEdge, hasNextPage bool, totalCount int64) *models.PostConnection {
 	return &models.PostConnection{
 		Edges: edges,
 		PageInfo: &models.PageInfo{

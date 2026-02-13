@@ -16,4 +16,4 @@ COPY --from=builder /src/build/ozon-test-task /app/ozon-test-task
 COPY --from=builder /src/.env /app/.env
 
 EXPOSE 8080
-ENTRYPOINT ["/app/ozon-test-task"]
+ENTRYPOINT ["./app/ozon-test-task", "--production"]

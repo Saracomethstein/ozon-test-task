@@ -8,7 +8,7 @@ deps:
 	@echo "==> Installing dependencies..."
 	go mod tidy
 
-build: deps
+build: clean deps
 	@echo "==> Building the application..."
 	mkdir build
 	go build -o $(BINARY_NAME) cmd/service/main.go

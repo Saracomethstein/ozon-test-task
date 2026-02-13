@@ -1,4 +1,4 @@
-package post
+package repository
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"github.com/Saracomethstein/ozon-test-task/internal/models"
 )
 
-type UseCase interface {
+type PostUC interface {
 	// TODO: rename func for package 'post'
 
 	SavePost(ctx context.Context, post models.Post) (models.Post, error)

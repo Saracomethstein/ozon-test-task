@@ -12,7 +12,7 @@ import (
 	"github.com/Saracomethstein/ozon-test-task/internal/utils/cursor"
 )
 
-func (s *commentService) Children(ctx context.Context, parentID int64, first *int32, after *string) (*models.CommentConnection, error) {
+func (s *Service) Children(ctx context.Context, parentID int64, first *int32, after *string) (*models.CommentConnection, error) {
 	loader, ok := ctx.Value(myLoader.Key).(dataloader.Interface)
 	if !ok {
 		return nil, errors.New("dataloader not found in context")

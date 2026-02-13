@@ -1,4 +1,4 @@
-package comment
+package repository
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"github.com/Saracomethstein/ozon-test-task/internal/models"
 )
 
-type UseCase interface {
+type CommentUC interface {
 	// TODO: rename func for package 'comment'
 
 	AddComment(ctx context.Context, comment models.Comment) (*models.Comment, error)

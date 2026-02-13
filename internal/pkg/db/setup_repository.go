@@ -7,8 +7,28 @@ import (
 	"time"
 
 	"github.com/Saracomethstein/ozon-test-task/internal/cfg"
+	"github.com/Saracomethstein/ozon-test-task/internal/repository"
 	"github.com/jackc/pgx/v4/pgxpool"
+
+	memComment "github.com/Saracomethstein/ozon-test-task/internal/repository/inmemory/comment"
+	memPost "github.com/Saracomethstein/ozon-test-task/internal/repository/inmemory/post"
+	pgComment "github.com/Saracomethstein/ozon-test-task/internal/repository/postgres/comment"
+	pgPost "github.com/Saracomethstein/ozon-test-task/internal/repository/postgres/post"
 )
+
+func NewPostgresContainer(db *pgxpool.Pool) *repository.Container {
+	return repository.New(
+		pgPost.New(db),
+		pgComment.New(db),
+	)
+}
+
+func NewInmemoryContainer() *repository.Container {
+	return repository.New(
+		memPost.New(),
+		memComment.New(),
+	)
+}
 
 func SetupDB(config cfg.Config) *pgxpool.Pool {
 	psqlInfo := fmt.Sprintf(
