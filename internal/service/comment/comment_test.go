@@ -2,10 +2,10 @@ package comment
 
 import (
 	"context"
+	"strings"
 	"testing"
 	"time"
 
-	"github.com/graph-gophers/dataloader"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -113,6 +113,18 @@ func TestService_AddComment(t *testing.T) {
 			setupMock:   func(repo *mocks.MockCommentUC) {},
 			wantErr:     true,
 			expectedErr: "postID must be greater 0",
+		},
+		{
+			name: "max_lenght",
+			input: models.AddCommentInput{
+				PostID:   "1",
+				ParentID: nil,
+				Author:   "Shrek",
+				Text:     strings.Repeat("a", 2001),
+			},
+			setupMock:   func(repo *mocks.MockCommentUC) {},
+			wantErr:     true,
+			expectedErr: "max comment length is 2000 char",
 		},
 		{
 			name: "comments_not_allowed",
@@ -556,20 +568,6 @@ func TestService_GetChildComments(t *testing.T) {
 			}
 			mockRepo.AssertExpectations(t)
 		})
-	}
-}
-
-type mockDataloader struct {
-	data map[string]interface{}
-	err  error
-}
-
-func (m *mockDataloader) Load(ctx context.Context, key dataloader.StringKey) dataloader.Thunk {
-	return func() (interface{}, error) {
-		if m.err != nil {
-			return nil, m.err
-		}
-		return m.data[string(key)], nil
 	}
 }
 

@@ -10,14 +10,21 @@ import (
 	"github.com/Saracomethstein/ozon-test-task/internal/models"
 )
 
+const (
+	MaxCommentLenght = 2000
+)
+
 func (s *Service) AddComment(ctx context.Context, in models.AddCommentInput) (*models.Comment, error) {
 	postID, err := strconv.ParseInt(in.PostID, 10, 64)
 	if err != nil {
 		return nil, errors.New("invalid postID format")
 	}
-
 	if postID <= 0 {
 		return nil, errors.New("postID must be greater 0")
+	}
+
+	if len(in.Text) > MaxCommentLenght {
+		return nil, errors.New("max comment length is 2000 char")
 	}
 
 	allow, err := s.repo.CheckAllowComments(ctx, postID)
