@@ -2,6 +2,7 @@ package mutation
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/pkg/errors"
 
@@ -25,7 +26,7 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input graphql.CreateP
 	}
 
 	return &graphql.Post{
-		ID:            out.ID,
+		ID:            strconv.FormatInt(out.ID, 10),
 		Title:         out.Title,
 		Body:          out.Body,
 		Author:        out.Author,

@@ -10,7 +10,6 @@ type Post {
   author: String!
   allowComments: Boolean!
   createdAt: String!
-  comments(first: Int, after: String): CommentConnection!
 }
 
 type PostEdge {

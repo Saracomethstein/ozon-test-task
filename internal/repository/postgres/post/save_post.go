@@ -2,7 +2,6 @@ package post
 
 import (
 	"context"
-	"strconv"
 
 	"github.com/Saracomethstein/ozon-test-task/internal/models"
 )
@@ -15,9 +14,8 @@ const (
 	`
 )
 
-func (r *post) SavePost(ctx context.Context, post models.Post) (models.Post, error) {
+func (r *post) Save(ctx context.Context, post models.Post) (models.Post, error) {
 	out := models.Post{}
-	var id int64
 
 	err := r.db.QueryRow(ctx, savePostQuery,
 		post.Title,
@@ -26,7 +24,7 @@ func (r *post) SavePost(ctx context.Context, post models.Post) (models.Post, err
 		post.AllowComments,
 		post.CreatedAt,
 	).Scan(
-		&id,
+		&out.ID,
 		&out.Title,
 		&out.Body,
 		&out.Author,
@@ -37,6 +35,5 @@ func (r *post) SavePost(ctx context.Context, post models.Post) (models.Post, err
 		return models.Post{}, err
 	}
 
-	out.ID = strconv.FormatInt(id, 10)
 	return out, nil
 }

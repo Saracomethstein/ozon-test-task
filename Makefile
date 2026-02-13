@@ -13,11 +13,20 @@ build: deps
 	mkdir build
 	go build -o $(BINARY_NAME) cmd/service/main.go
 
+run: build
+	./$(BINARY_NAME)
+
 clean:
 	@echo "==> Cleaning up..."
-	go clean
-	rm -f $(BINARY_NAME)
-	rm -rf build
+	@go clean
+	@rm -f $(BINARY_NAME)
+	@rm -rf build
+	@rm coverage.*
+
+test:
+	@go test ./... -coverprofile=coverage.out
+	@go tool cover -html=coverage.out -o coverage.html
+	@open ./coverage.html    
 
 docker-build:
 	@echo "==> Building Docker containers..."

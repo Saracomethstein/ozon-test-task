@@ -1,9 +1,9 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
@@ -17,42 +17,32 @@ import (
 	"github.com/Saracomethstein/ozon-test-task/internal/handler/graphql/resolvers"
 	"github.com/Saracomethstein/ozon-test-task/internal/pkg/db"
 	"github.com/Saracomethstein/ozon-test-task/internal/repository"
-	"github.com/Saracomethstein/ozon-test-task/internal/repository/postgres"
 	"github.com/Saracomethstein/ozon-test-task/internal/service"
 	"github.com/Saracomethstein/ozon-test-task/internal/service/comment"
 	"github.com/Saracomethstein/ozon-test-task/internal/service/post"
 	"github.com/vektah/gqlparser/v2/ast"
-
-	commentRepository "github.com/Saracomethstein/ozon-test-task/internal/repository/postgres/comment"
-	postRepository "github.com/Saracomethstein/ozon-test-task/internal/repository/postgres/post"
 )
 
 const defaultPort = "8080"
 
+var (
+	production = flag.Bool("production", false, "use PostgreSQL storage")
+)
+
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = defaultPort
-	}
+	flag.Parse()
 
-	cfg := cfg.New()
+	rContainer := GetRepositoryContainer()
 
-	pgpool := db.SetupDB(*cfg)
+	postSvc := post.New(rContainer.Post)
+	commentSvc := comment.New(rContainer.Comment)
+	commentLoader := dataloader.NewCommentLoader(rContainer.Comment)
 
-	postRepo := postRepository.New(pgpool)
-	commentRepo := commentRepository.New(pgpool)
-	postgresRepository := postgres.New(commentRepo, postRepo)
+	allSvc := service.New(postSvc, commentSvc)
 
-	repository := repository.New(postgresRepository)
-	postService := post.New(repository)
-	commentService := comment.New(repository)
+	srv := handler.New(graphql.NewExecutableSchema(graphql.Config{Resolvers: resolvers.New(allSvc)}))
 
-	loader := dataloader.NewCommentLoader(repository)
-	service := service.New(postService, commentService)
-
-	srv := handler.New(graphql.NewExecutableSchema(graphql.Config{Resolvers: resolvers.New(service)}))
-
-	handlerWithDataloader := middleware.DataloaderMiddleware(*loader)(srv)
+	handlerWithDataloader := middleware.DataloaderMiddleware(*commentLoader)(srv)
 
 	srv.AddTransport(transport.Options{})
 	srv.AddTransport(transport.GET{})
@@ -69,6 +59,19 @@ func main() {
 	http.Handle("/query", handlerWithDataloader)
 	http.Handle("/playground", playground.Handler("GraphQL playground", "/query"))
 
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", defaultPort)
+	log.Fatal(http.ListenAndServe(":"+defaultPort, nil))
+}
+
+func GetRepositoryContainer() *repository.Container {
+	cfg := cfg.New()
+
+	if *production {
+		log.Println("Starting with PostgreSQL storage")
+		pgpool := db.SetupDB(*cfg)
+		return db.NewPostgresContainer(pgpool)
+	}
+
+	log.Println("Starting with inmemory storage")
+	return db.NewInmemoryContainer()
 }

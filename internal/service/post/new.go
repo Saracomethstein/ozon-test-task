@@ -4,12 +4,12 @@ import (
 	"github.com/Saracomethstein/ozon-test-task/internal/repository"
 )
 
-type postService struct {
-	repo *repository.Container
+type Post struct {
+	repo repository.PostUC
 }
 
-func New(repo *repository.Container) UseCase {
-	return &postService{
+func New(repo repository.PostUC) *Post {
+	return &Post{
 		repo: repo,
 	}
 }

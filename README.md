@@ -1,35 +1,143 @@
-### Test task for Ozon
+# Ozon Test Task — GraphQL Posts & Comments System
 
-Реализовать систему для добавления и чтения постов и комментариев с использованием GraphQL (https://gqlgen.com/), аналогичную комментариям к постам на популярных платформах, таких как Хабр или Reddit.
+Данный проект представляет собой систему блога с постами и иерархическими комментариями, реализованную на **Go** с использованием **GraphQL** (библиотека [gqlgen](https://gqlgen.com/)). Система поддерживает два типа хранилищ: **in-memory** и **PostgreSQL**.
 
-Характеристики системы постов:
+## Build
 
-    • Можно просмотреть список постов.
-    • Можно просмотреть пост и комментарии под ним.
-    • Пользователь, написавший пост, может запретить оставление комментариев к своему посту.
+#### Postgres storage
+```sh
+make docker-up
+```
 
-Характеристики системы комментариев к постам:
+#### Inmemory storage
+```sh
+make run
+```
 
-    • Комментарии организованы иерархически, позволяя вложенность без ограничений.
-    • Длина текста комментария ограничена до, например, 2000 символов.
-    • Система пагинации для получения списка комментариев.
+#### Tests
+```sh
+make test
+```
 
-(*) Дополнительные требования для реализации через GraphQL Subscriptions:
-
-    • Комментарии к постам должны доставляться асинхронно, т.е. клиенты, подписанные на определенный пост, должны получать уведомления о новых комментариях без необходимости повторного запроса.
-
-Требования к реализации:
-
-    • Система должна быть написана на языке Go.
-    • Использование Docker для распространения сервиса в виде Docker-образа.
-    • Должно быть реализовано 2 варианта хранение данных: в памяти (in-memory) и в PostgreSQL.
-    • Покрытие реализованного функционала unit-тестами.
-
-Критерии оценки:
-
-    • Как хранятся комментарии и как организована таблица в базе данных/in-memory, включая механизм пагинации.
-    • Качество и чистота кода, структура проекта и распределение файлов по пакетам.
-    • Обработка ошибок в различных сценариях использования.
-    • Удобство и логичность использования системы комментариев.
-    • Эффективность работы системы при множественном одновременном использовании, сравнимая с популярными сервисами, такими как Хабр.
-    • В реализации учитываются возможные проблемы с производительностью, такие как проблемы с n+1 запросами и большая вложенность комментариев.
+### Project Tree
+```sh
+├── cmd
+│   └── service
+│       └── main.go
+├── docker-compose.yaml
+├── Dockerfile
+├── generated
+│   └── graphql
+│       ├── models_generated.go
+│       ├── prelude_generated.go
+│       ├── root_.generated.go
+│       └── schema_generated.go
+├── go.mod
+├── go.sum
+├── gqlgen.yml
+├── internal
+│   ├── cfg
+│   │   └── config.go
+│   ├── graphql
+│   │   ├── dataloader
+│   │   │   ├── dataloader.go
+│   │   │   └── new.go
+│   │   └── middleware
+│   │       └── middleware.go
+│   ├── handler
+│   │   └── graphql
+│   │       └── resolvers
+│   │           ├── comment
+│   │           │   ├── children.go
+│   │           │   ├── comment.go
+│   │           │   └── comment_test.go
+│   │           ├── mutation
+│   │           │   ├── add_comment.go
+│   │           │   ├── create_post.go
+│   │           │   ├── mutation.go
+│   │           │   ├── mutation_test.go
+│   │           │   └── set_post_comments_allowed.go
+│   │           ├── query
+│   │           │   ├── comment_by_post.go
+│   │           │   ├── post.go
+│   │           │   ├── posts.go
+│   │           │   ├── query.go
+│   │           │   └── query_test.go
+│   │           ├── resolver.go
+│   │           └── subscription
+│   │               ├── comment_added.go
+│   │               └── subscription.go
+│   ├── models
+│   │   └── models.go
+│   ├── pkg
+│   │   └── db
+│   │       └── setup_repository.go
+│   ├── repository
+│   │   ├── comment_interface.go
+│   │   ├── inmemory
+│   │   │   ├── comment
+│   │   │   │   ├── add_comment.go
+│   │   │   │   ├── comments_by_post.go
+│   │   │   │   ├── comment_test.go
+│   │   │   │   └── new.go
+│   │   │   └── post
+│   │   │       ├── new.go
+│   │   │       ├── post.go
+│   │   │       ├── posts.go
+│   │   │       ├── post_test.go
+│   │   │       ├── save_post.go
+│   │   │       └── set_comments_allowed.go
+│   │   ├── interface.go
+│   │   ├── mocks
+│   │   │   ├── mock_CommentUC.go
+│   │   │   └── mock_PostUC.go
+│   │   ├── postgres
+│   │   │   ├── comment
+│   │   │   │   ├── add_comment.go
+│   │   │   │   ├── comments_by_post.go
+│   │   │   │   ├── comment_test.go
+│   │   │   │   ├── mocks
+│   │   │   │   │   └── mock_DB.go
+│   │   │   │   └── new.go
+│   │   │   └── post
+│   │   │       ├── mocks
+│   │   │       │   └── mock_DB.go
+│   │   │       ├── new.go
+│   │   │       ├── post.go
+│   │   │       ├── posts.go
+│   │   │       ├── post_test.go
+│   │   │       ├── save_post.go
+│   │   │       └── set_comments_allowed.go
+│   │   └── repository.go
+│   ├── service
+│   │   ├── comment
+│   │   │   ├── add_comment.go
+│   │   │   ├── children.go
+│   │   │   ├── comments_by_post.go
+│   │   │   ├── comment_test.go
+│   │   │   ├── interface.go
+│   │   │   ├── mocks
+│   │   │   │   └── mock_UseCase.go
+│   │   │   └── new.go
+│   │   ├── post
+│   │   │   ├── create_post.go
+│   │   │   ├── interface.go
+│   │   │   ├── mocks
+│   │   │   │   └── mock_UseCase.go
+│   │   │   ├── new.go
+│   │   │   ├── post.go
+│   │   │   ├── posts.go
+│   │   │   ├── post_test.go
+│   │   │   └── set_post_comments_allowed.go
+│   │   └── service.go
+│   └── utils
+│       └── cursor
+│           └── cursor.go
+├── Makefile
+├── migrations
+│   ├── 001-add-post.sql
+│   └── 002-add-comment.sql
+├── README.md
+└── schema
+    └── schema.graphqls
+```

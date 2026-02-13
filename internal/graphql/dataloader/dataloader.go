@@ -27,7 +27,7 @@ func (l *CommentLoader) BatchGetChildren(ctx context.Context, keys dataloader.Ke
 		parentIDs[i] = id
 	}
 
-	comments, err := l.repo.DB.Comment.GetChildCommentsBatch(ctx, parentIDs)
+	comments, err := l.repo.GetChildBatch(ctx, parentIDs)
 	if err != nil {
 		errResults := make([]*dataloader.Result, len(keys))
 		for i := range errResults {

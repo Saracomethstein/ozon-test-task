@@ -4,12 +4,12 @@ import (
 	"github.com/Saracomethstein/ozon-test-task/internal/repository"
 )
 
-type commentService struct {
-	repo *repository.Container
+type Service struct {
+	repo repository.CommentUC
 }
 
-func New(repo *repository.Container) UseCase {
-	return &commentService{
+func New(repo repository.CommentUC) *Service {
+	return &Service{
 		repo: repo,
 	}
 }

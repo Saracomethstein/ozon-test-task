@@ -46,13 +46,12 @@ type PageInfo struct {
 }
 
 type Post struct {
-	ID            string             `json:"id"`
-	Title         string             `json:"title"`
-	Body          string             `json:"body"`
-	Author        string             `json:"author"`
-	AllowComments bool               `json:"allowComments"`
-	CreatedAt     string             `json:"createdAt"`
-	Comments      *CommentConnection `json:"comments"`
+	ID            string `json:"id"`
+	Title         string `json:"title"`
+	Body          string `json:"body"`
+	Author        string `json:"author"`
+	AllowComments bool   `json:"allowComments"`
+	CreatedAt     string `json:"createdAt"`
 }
 
 type PostConnection struct {

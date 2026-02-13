@@ -3,9 +3,9 @@ package dataloader
 import repository "github.com/Saracomethstein/ozon-test-task/internal/repository"
 
 type CommentLoader struct {
-	repo *repository.Container
+	repo repository.CommentUC
 }
 
-func NewCommentLoader(repo *repository.Container) *CommentLoader {
+func NewCommentLoader(repo repository.CommentUC) *CommentLoader {
 	return &CommentLoader{repo: repo}
 }

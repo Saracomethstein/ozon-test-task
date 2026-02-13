@@ -10,17 +10,24 @@ import (
 	"github.com/Saracomethstein/ozon-test-task/internal/models"
 )
 
-func (s *commentService) AddComment(ctx context.Context, in models.AddCommentInput) (*models.Comment, error) {
+const (
+	MaxCommentLenght = 2000
+)
+
+func (s *Service) AddComment(ctx context.Context, in models.AddCommentInput) (*models.Comment, error) {
 	postID, err := strconv.ParseInt(in.PostID, 10, 64)
 	if err != nil {
 		return nil, errors.New("invalid postID format")
 	}
-
 	if postID <= 0 {
 		return nil, errors.New("postID must be greater 0")
 	}
 
-	allow, err := s.repo.DB.Comment.CheckPostAllowComments(ctx, postID)
+	if len(in.Text) > MaxCommentLenght {
+		return nil, errors.New("max comment length is 2000 char")
+	}
+
+	allow, err := s.repo.CheckAllowComments(ctx, postID)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +41,7 @@ func (s *commentService) AddComment(ctx context.Context, in models.AddCommentInp
 	}
 
 	now := time.Now().UTC().Format(time.RFC3339)
-	comment, err := s.repo.DB.Comment.AddComment(ctx, models.Comment{
+	comment, err := s.repo.Add(ctx, models.Comment{
 		PostID:    postID,
 		ParentID:  parentID,
 		Author:    in.Author,
@@ -48,7 +55,7 @@ func (s *commentService) AddComment(ctx context.Context, in models.AddCommentInp
 	return comment, nil
 }
 
-func (s *commentService) processParent(ctx context.Context, parentIDStr *string, postID int64) (*int64, error) {
+func (s *Service) processParent(ctx context.Context, parentIDStr *string, postID int64) (*int64, error) {
 	if parentIDStr == nil || *parentIDStr == "" {
 		return nil, nil
 	}
@@ -58,7 +65,7 @@ func (s *commentService) processParent(ctx context.Context, parentIDStr *string,
 		return nil, errors.New("invalid parentID format")
 	}
 
-	parentPostID, err := s.repo.DB.Comment.CheckParentCommentExists(ctx, pid)
+	parentPostID, err := s.repo.CheckParentExists(ctx, pid)
 	if err != nil {
 		return nil, err
 	}

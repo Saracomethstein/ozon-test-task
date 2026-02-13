@@ -2,11 +2,11 @@ package post
 
 import (
 	"context"
-	"database/sql"
-	"strconv"
+
+	"github.com/jackc/pgx/v4"
+	"github.com/pkg/errors"
 
 	"github.com/Saracomethstein/ozon-test-task/internal/models"
-	"github.com/pkg/errors"
 )
 
 const (
@@ -21,10 +21,10 @@ const (
 	totalCountQuery = `select count(*) from posts`
 )
 
-func (r *post) GetPosts(ctx context.Context, afterCreatedAt *string, afterID int64, limit int32) ([]*models.Post, error) {
+func (r *post) Get(ctx context.Context, afterCreatedAt *string, afterID int64, limit int32) ([]*models.Post, error) {
 	rows, err := r.db.Query(ctx, getPostsQuery, afterCreatedAt, afterID, limit)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return []*models.Post{}, nil
 		}
 		return nil, err
@@ -34,10 +34,9 @@ func (r *post) GetPosts(ctx context.Context, afterCreatedAt *string, afterID int
 	posts := make([]*models.Post, 0, limit)
 	for rows.Next() {
 		var p models.Post
-		var dbID int64
 
 		err := rows.Scan(
-			&dbID,
+			&p.ID,
 			&p.Title,
 			&p.Body,
 			&p.Author,
@@ -48,7 +47,6 @@ func (r *post) GetPosts(ctx context.Context, afterCreatedAt *string, afterID int
 			return nil, err
 		}
 
-		p.ID = strconv.FormatInt(dbID, 10)
 		posts = append(posts, &p)
 	}
 
@@ -63,9 +61,6 @@ func (r *post) TotalCount(ctx context.Context) (int64, error) {
 	var count int64
 
 	err := r.db.QueryRow(ctx, totalCountQuery).Scan(&count)
-	if err != nil {
-		return 0, err
-	}
 
-	return count, nil
+	return count, err
 }

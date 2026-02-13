@@ -40,7 +40,7 @@ type PageInfo struct {
 }
 
 type Post struct {
-	ID            string
+	ID            int64
 	Title         string
 	Body          string
 	Author        string

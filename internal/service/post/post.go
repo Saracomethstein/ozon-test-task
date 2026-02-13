@@ -9,7 +9,7 @@ import (
 	"github.com/Saracomethstein/ozon-test-task/internal/models"
 )
 
-func (s *postService) GetPostById(ctx context.Context, postID string) (*models.Post, error) {
+func (s *Post) GetPostById(ctx context.Context, postID string) (*models.Post, error) {
 	if postID == "" {
 		return nil, errors.New("post ID cannot be empty")
 	}
@@ -23,7 +23,7 @@ func (s *postService) GetPostById(ctx context.Context, postID string) (*models.P
 		return nil, errors.New("post ID must be a positive integer")
 	}
 
-	post, err := s.repo.DB.Post.GetPostById(ctx, id)
+	post, err := s.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}

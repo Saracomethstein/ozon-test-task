@@ -6,9 +6,29 @@ import (
 	"log"
 	"time"
 
-	"github.com/Saracomethstein/ozon-test-task/internal/cfg"
 	"github.com/jackc/pgx/v4/pgxpool"
+
+	"github.com/Saracomethstein/ozon-test-task/internal/cfg"
+	"github.com/Saracomethstein/ozon-test-task/internal/repository"
+	memComment "github.com/Saracomethstein/ozon-test-task/internal/repository/inmemory/comment"
+	memPost "github.com/Saracomethstein/ozon-test-task/internal/repository/inmemory/post"
+	pgComment "github.com/Saracomethstein/ozon-test-task/internal/repository/postgres/comment"
+	pgPost "github.com/Saracomethstein/ozon-test-task/internal/repository/postgres/post"
 )
+
+func NewPostgresContainer(db *pgxpool.Pool) *repository.Container {
+	rPost := pgPost.New(db)
+	rComment := pgComment.New(db)
+
+	return repository.New(rPost, rComment)
+}
+
+func NewInmemoryContainer() *repository.Container {
+	rPost := memPost.New()
+	rComment := memComment.New(rPost)
+
+	return repository.New(rPost, rComment)
+}
 
 func SetupDB(config cfg.Config) *pgxpool.Pool {
 	psqlInfo := fmt.Sprintf(

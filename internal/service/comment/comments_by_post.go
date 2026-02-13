@@ -4,9 +4,10 @@ import (
 	"context"
 	"strconv"
 
+	"github.com/pkg/errors"
+
 	"github.com/Saracomethstein/ozon-test-task/internal/models"
 	"github.com/Saracomethstein/ozon-test-task/internal/utils/cursor"
-	"github.com/pkg/errors"
 )
 
 const (
@@ -19,7 +20,7 @@ type cursorPosition struct {
 	err            error
 }
 
-func (s *commentService) GetRootComments(ctx context.Context, postID string, first *int32, after *string) (*models.CommentConnection, error) {
+func (s *Service) GetRootComments(ctx context.Context, postID string, first *int32, after *string) (*models.CommentConnection, error) {
 	pID, err := strconv.ParseInt(postID, 10, 64)
 	if err != nil {
 		return nil, errors.New("invalid postID format")
@@ -35,7 +36,7 @@ func (s *commentService) GetRootComments(ctx context.Context, postID string, fir
 		return nil, cursorPos.err
 	}
 
-	comments, err := s.repo.DB.Comment.GetRootCommentsByPost(ctx, pID, cursorPos.afterCreatedAt, cursorPos.afterID, limit+1)
+	comments, err := s.repo.GetRootByPost(ctx, pID, cursorPos.afterCreatedAt, cursorPos.afterID, limit+1)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +45,7 @@ func (s *commentService) GetRootComments(ctx context.Context, postID string, fir
 
 	edges := s.buildEdges(pageComments)
 
-	totalCount, err := s.repo.DB.Comment.TotalCountComments(ctx, pID)
+	totalCount, err := s.repo.TotalCount(ctx, pID)
 	if err != nil {
 		return nil, err
 	}
@@ -52,13 +53,10 @@ func (s *commentService) GetRootComments(ctx context.Context, postID string, fir
 	return s.buildConnection(edges, hasNextPage, totalCount), nil
 }
 
-func (s *commentService) GetChildComments(ctx context.Context, parentID string, first *int32, after *string) (*models.CommentConnection, error) {
+func (s *Service) GetChildComments(ctx context.Context, parentID string, first *int32, after *string) (*models.CommentConnection, error) {
 	pID, err := strconv.ParseInt(parentID, 10, 64)
 	if err != nil || pID <= 0 {
 		return nil, errors.New("invalid parentID")
-	}
-	if pID <= 0 {
-		return nil, errors.New("postID must be greater 0")
 	}
 
 	limit := s.getLimit(first)
@@ -68,7 +66,7 @@ func (s *commentService) GetChildComments(ctx context.Context, parentID string, 
 		return nil, cursorPos.err
 	}
 
-	comments, err := s.repo.DB.Comment.GetChildComments(ctx, pID, cursorPos.afterCreatedAt, cursorPos.afterID, limit+1)
+	comments, err := s.repo.GetChild(ctx, pID, cursorPos.afterCreatedAt, cursorPos.afterID, limit+1)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +80,7 @@ func (s *commentService) GetChildComments(ctx context.Context, parentID string, 
 	return s.buildConnection(edges, hasNextPage, totalCount), nil
 }
 
-func (s *commentService) getLimit(first *int32) int32 {
+func (s *Service) getLimit(first *int32) int32 {
 	if first != nil && *first > 0 {
 		return *first
 	}
@@ -90,7 +88,7 @@ func (s *commentService) getLimit(first *int32) int32 {
 	return defaultPageLimit
 }
 
-func (s *commentService) parseCursor(after *string) cursorPosition {
+func (s *Service) parseCursor(after *string) cursorPosition {
 	if after == nil || *after == "" {
 		return cursorPosition{}
 	}
@@ -108,7 +106,7 @@ func (s *commentService) parseCursor(after *string) cursorPosition {
 	}
 }
 
-func (s *commentService) extractPage(comments []*models.Comment, limit int32) (hasNextPage bool, page []*models.Comment) {
+func (s *Service) extractPage(comments []*models.Comment, limit int32) (hasNextPage bool, page []*models.Comment) {
 	if len(comments) > int(limit) {
 		return true, comments[:limit]
 	}
@@ -116,7 +114,7 @@ func (s *commentService) extractPage(comments []*models.Comment, limit int32) (h
 	return false, comments
 }
 
-func (s *commentService) buildEdges(comments []*models.Comment) []*models.CommentEdge {
+func (s *Service) buildEdges(comments []*models.Comment) []*models.CommentEdge {
 	edges := make([]*models.CommentEdge, 0, len(comments))
 
 	for _, c := range comments {
@@ -130,7 +128,7 @@ func (s *commentService) buildEdges(comments []*models.Comment) []*models.Commen
 	return edges
 }
 
-func (s *commentService) getEndCursor(edges []*models.CommentEdge) *string {
+func (s *Service) getEndCursor(edges []*models.CommentEdge) *string {
 	if len(edges) == 0 {
 		return nil
 	}
@@ -138,7 +136,7 @@ func (s *commentService) getEndCursor(edges []*models.CommentEdge) *string {
 	return &edges[len(edges)-1].Cursor
 }
 
-func (s *commentService) buildConnection(edges []*models.CommentEdge, hasNextPage bool, totalCount int64) *models.CommentConnection {
+func (s *Service) buildConnection(edges []*models.CommentEdge, hasNextPage bool, totalCount int64) *models.CommentConnection {
 	return &models.CommentConnection{
 		Edges: edges,
 		PageInfo: &models.PageInfo{

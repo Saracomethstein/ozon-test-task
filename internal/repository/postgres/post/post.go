@@ -2,11 +2,11 @@ package post
 
 import (
 	"context"
-	"database/sql"
-	"strconv"
+
+	"github.com/jackc/pgx/v4"
+	"github.com/pkg/errors"
 
 	"github.com/Saracomethstein/ozon-test-task/internal/models"
-	"github.com/pkg/errors"
 )
 
 const (
@@ -17,12 +17,11 @@ const (
 	`
 )
 
-func (r *post) GetPostById(ctx context.Context, postID int64) (*models.Post, error) {
+func (r *post) GetByID(ctx context.Context, postID int64) (*models.Post, error) {
 	var out models.Post
 
-	var dbID int64
 	err := r.db.QueryRow(ctx, getPostByIdQuery, postID).Scan(
-		&dbID,
+		&out.ID,
 		&out.Title,
 		&out.Body,
 		&out.Author,
@@ -30,12 +29,11 @@ func (r *post) GetPostById(ctx context.Context, postID int64) (*models.Post, err
 		&out.CreatedAt,
 	)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, errors.New("post not found")
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrPostNotFound
 		}
 		return nil, err
 	}
 
-	out.ID = strconv.FormatInt(dbID, 10)
 	return &out, nil
 }

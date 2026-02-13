@@ -4,9 +4,9 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/Saracomethstein/ozon-test-task/internal/models"
-	"github.com/jackc/pgx/v4"
 	"github.com/pkg/errors"
+
+	"github.com/Saracomethstein/ozon-test-task/internal/models"
 )
 
 const (
@@ -38,7 +38,7 @@ const (
 	countCommentsByPostQuery = `select count(*) from comments where post_id = $1`
 )
 
-func (r *comment) GetRootCommentsByPost(ctx context.Context, postID int64, afterCreatedAt *string, afterID int64, limit int32) ([]*models.Comment, error) {
+func (r *comment) GetRootByPost(ctx context.Context, postID int64, afterCreatedAt *string, afterID int64, limit int32) ([]*models.Comment, error) {
 	rows, err := r.db.Query(ctx, getRootCommentsByPostQuery,
 		postID,
 		afterCreatedAt,
@@ -75,7 +75,7 @@ func (r *comment) GetRootCommentsByPost(ctx context.Context, postID int64, after
 	return comments, rows.Err()
 }
 
-func (r *comment) GetChildComments(ctx context.Context, parentID int64, afterCreatedAt *string, afterID int64, limit int32) ([]*models.Comment, error) {
+func (r *comment) GetChild(ctx context.Context, parentID int64, afterCreatedAt *string, afterID int64, limit int32) ([]*models.Comment, error) {
 	rows, err := r.db.Query(ctx, getChildCommentsQuery,
 		parentID,
 		afterCreatedAt,
@@ -83,7 +83,7 @@ func (r *comment) GetChildComments(ctx context.Context, parentID int64, afterCre
 		limit,
 	)
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
+		if errors.Is(err, sql.ErrNoRows) {
 			return []*models.Comment{}, nil
 		}
 		return nil, err
@@ -111,7 +111,7 @@ func (r *comment) GetChildComments(ctx context.Context, parentID int64, afterCre
 	return comments, rows.Err()
 }
 
-func (r *comment) GetChildCommentsBatch(ctx context.Context, parentIDs []int64) ([]*models.Comment, error) {
+func (r *comment) GetChildBatch(ctx context.Context, parentIDs []int64) ([]*models.Comment, error) {
 	rows, err := r.db.Query(ctx, getChildCommentsBatchQuery, parentIDs)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -121,7 +121,7 @@ func (r *comment) GetChildCommentsBatch(ctx context.Context, parentIDs []int64) 
 	}
 	defer rows.Close()
 
-	var comments []*models.Comment
+	comments := make([]*models.Comment, 0)
 	for rows.Next() {
 		c := models.Comment{}
 
@@ -143,7 +143,7 @@ func (r *comment) GetChildCommentsBatch(ctx context.Context, parentIDs []int64) 
 	return comments, rows.Err()
 }
 
-func (r *comment) TotalCountComments(ctx context.Context, postID int64) (int64, error) {
+func (r *comment) TotalCount(ctx context.Context, postID int64) (int64, error) {
 	var count int64
 
 	err := r.db.QueryRow(ctx, countCommentsByPostQuery, postID).Scan(&count)

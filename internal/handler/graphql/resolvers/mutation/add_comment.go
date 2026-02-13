@@ -4,9 +4,10 @@ import (
 	"context"
 	"strconv"
 
+	"github.com/pkg/errors"
+
 	"github.com/Saracomethstein/ozon-test-task/generated/graphql"
 	"github.com/Saracomethstein/ozon-test-task/internal/models"
-	"github.com/pkg/errors"
 )
 
 func (r *mutationResolver) AddComment(ctx context.Context, input graphql.AddCommentInput) (*graphql.Comment, error) {
