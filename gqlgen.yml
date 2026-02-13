@@ -39,8 +39,3 @@ models:
     fields:
       children:
         resolver: true
-
-  Post:
-    fields:
-      comments:
-        resolver: true

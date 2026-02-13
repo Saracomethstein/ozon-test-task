@@ -162,7 +162,7 @@ func TestPostRepo_Get(t *testing.T) {
 	now := time.Now().UTC()
 
 	posts := []models.Post{
-		{ID: 1, Title: "Post 1", CreatedAt: now.Format(time.RFC3339)}, // самое новое
+		{ID: 1, Title: "Post 1", CreatedAt: now.Format(time.RFC3339)},
 		{ID: 2, Title: "Post 2", CreatedAt: now.Add(-1 * time.Hour).Format(time.RFC3339)},
 		{ID: 3, Title: "Post 3", CreatedAt: now.Add(-2 * time.Hour).Format(time.RFC3339)},
 		{ID: 4, Title: "Post 4", CreatedAt: now.Add(-3 * time.Hour).Format(time.RFC3339)},

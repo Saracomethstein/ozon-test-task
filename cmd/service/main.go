@@ -10,6 +10,8 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/lru"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/vektah/gqlparser/v2/ast"
+
 	"github.com/Saracomethstein/ozon-test-task/generated/graphql"
 	"github.com/Saracomethstein/ozon-test-task/internal/cfg"
 	"github.com/Saracomethstein/ozon-test-task/internal/graphql/dataloader"
@@ -20,7 +22,6 @@ import (
 	"github.com/Saracomethstein/ozon-test-task/internal/service"
 	"github.com/Saracomethstein/ozon-test-task/internal/service/comment"
 	"github.com/Saracomethstein/ozon-test-task/internal/service/post"
-	"github.com/vektah/gqlparser/v2/ast"
 )
 
 const defaultPort = "8080"
